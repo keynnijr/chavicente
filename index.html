@@ -8,52 +8,74 @@
   body {
     margin: 0;
     padding: 0;
-    background-color: #f0f0f0;
+    background-color: #e0e6eb; /* Uma cor de fundo suave fora do mobile container */
     display: flex;
     justify-content: center;
+    align-items: center;
     font-family: Arial, sans-serif;
+    min-height: 100vh;
   }
 
-  /* Contêiner Mobile 9:16 */
+  /* Contêiner Mobile 9:16 responsivo */
   .landing-container {
     position: relative;
     width: 100%;
     max-width: 450px; /* Limite para não ficar gigante em telas de PC */
     aspect-ratio: 9 / 16;
-    background-image: url('./convite_vicente.png');
+    /* --- ALTERAÇÃO IMPORTANTE PARA GITHUB PAGES --- */
+    background-image: url('convite_vicente.png'); /* Nome exato do arquivo da sua imagem */
+    /* ----------------------------------------------- */
     background-size: cover;
     background-position: center;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     overflow: hidden;
   }
 
-  /* Áreas Clicáveis Invisíveis */
+  /* Áreas Clicáveis Invisíveis (Onde faremos o efeito hover) */
   .overlay-btn {
     position: absolute;
-    background: rgba(0, 0, 0, 0); /* Mude o último 0 para 0.3 se quiser ver onde a caixa está para ajustar a posição */
+    /* Começa invisível, mas transparente para o fundo */
+    background: rgba(255, 255, 255, 0); 
     border: none;
     cursor: pointer;
     z-index: 10;
+    
+    /* CONFIGURAÇÃO DE TRANSIÇÃO PARA O EFEITO HOVER (SUTIL) */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    transform: scale(1); /* Ponto de partida para o zoom */
   }
 
-  /* Ajuste top, left, width e height conforme a exata posição na sua imagem */
+  /* --- EFEITO HOVER SUTIL (Zoom e Brilho) --- */
+  .overlay-btn:hover {
+    /* 1. Efeito de Zoom (sutil: 1.05 = 5% maior) */
+    transform: scale(1.05); 
+    
+    /* 2. Efeito de Brilho (uma sombra branca suave) */
+    box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.7); 
+    
+    /* 3. Um leve realce de cor (opcional, para dar profundidade) */
+    background: rgba(255, 255, 255, 0.1); 
+  }
+
+  /* Posicionamento exato na imagem (ajuste se necessário) */
   .btn-confirm-overlay {
-    top: 64%;
-    left: 10%;
-    width: 60%;
+    top: 64%; /* Início da área do balão */
+    left: 11%;
+    width: 60%; /* Cobrindo todo o balão */
     height: 8%;
-    border-radius: 20px;
+    border-radius: 20px; /* Mantém a forma redonda do balão no hover */
   }
 
   .address-overlay {
-    top: 73%;
+    top: 73%; /* Início da área do texto do endereço */
     left: 10%;
     width: 70%;
     height: 10%;
-    display: block;
+    border-radius: 10px; /* Arredondamento suave no hover para o texto */
+    display: block; /* Para o link se comportar como um bloco */
   }
 
-  /* Modal */
+  /* Estilização do Modal (Inalterado) */
   .modal {
     display: none;
     position: fixed;
@@ -75,6 +97,7 @@
     max-width: 350px;
     text-align: center;
     position: relative;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
   }
 
   .close-btn {
@@ -93,6 +116,12 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+
+  input[type="text"]:focus, input[type="email"]:focus {
+    border-color: #5c8ebd;
   }
 
   .submit-btn {
@@ -105,15 +134,22 @@
     cursor: pointer;
     width: 100%;
     margin-top: 10px;
+    transition: background-color 0.3s ease;
+  }
+
+  .submit-btn:hover {
+    background-color: #4a759e;
   }
   
   .submit-btn:disabled {
     background-color: #999;
+    cursor: not-allowed;
   }
 
   #form-msg {
     margin-top: 15px;
     font-size: 14px;
+    min-height: 20px;
   }
 </style>
 </head>
@@ -122,13 +158,14 @@
 <div class="landing-container">
   <button class="overlay-btn btn-confirm-overlay" onclick="openModal()"></button>
 
-  <a href="https://maps.app.goo.gl/Qg6UPMz1A3KpCEU36" target="_blank" class="overlay-btn address-overlay"></a>
+  <a href="https://maps.app.goo.gl/RsZjk8qoahGA6cKA8" target="_blank" class="overlay-btn address-overlay"></a>
 </div>
 
 <div id="rsvp-modal" class="modal">
   <div class="modal-content">
-    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <span class="close-btn" onclick="closeModal()">×</span>
     <h2 style="color: #5c8ebd; margin-top: 0;">Confirmar Presença</h2>
+    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Estamos ansiosos para ver você!</p>
     <form id="rsvp-form">
       <input type="text" id="guest-name" placeholder="Seu nome completo" required>
       <input type="email" id="guest-email" placeholder="Seu e-mail" required>
@@ -139,7 +176,10 @@
 </div>
 
 <script>
+  /* --- COLE AQUI O SEU URL DO WEB APP --- */
   const scriptURL = 'https://script.google.com/macros/s/AKfycbzEQ-A02vcnqJQnFSiPgeJ5UNAv9k1rnosx81TgiuIHvRE0aZidqbMllFty3zMAY0g3/exec';
+  /* ------------------------------------ */
+  
   const modal = document.getElementById('rsvp-modal');
   const form = document.getElementById('rsvp-form');
   const msg = document.getElementById('form-msg');
@@ -155,15 +195,18 @@
     msg.innerText = '';
   }
 
-  // Fecha clicando fora
+  // Fecha o modal clicando fora da caixa
   window.onclick = function(event) {
     if (event.target == modal) closeModal();
   }
 
+  // Lógica de envio (Inalterada)
   form.addEventListener('submit', e => {
     e.preventDefault();
     submitBtn.innerText = 'Enviando...';
     submitBtn.disabled = true;
+    msg.style.color = "#666";
+    msg.innerText = "Processando sua confirmação...";
 
     const data = {
       name: document.getElementById('guest-name').value,
@@ -173,17 +216,18 @@
     fetch(scriptURL, {
       method: 'POST',
       body: JSON.stringify(data),
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' } // text/plain evita bloqueio restrito de preflight do CORS no Apps Script
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
     })
     .then(response => response.json())
     .then(data => {
       msg.style.color = "green";
       msg.innerText = "Presença confirmada! Verifique seu e-mail.";
-      setTimeout(closeModal, 3000);
+      setTimeout(closeModal, 3500); // Fecha automaticamente após 3.5 segundos
     })
     .catch(error => {
+      console.error('Erro:', error);
       msg.style.color = "red";
-      msg.innerText = "Erro ao enviar. Tente novamente.";
+      msg.innerText = "Ocorreu um erro ao enviar. Tente novamente.";
     })
     .finally(() => {
       submitBtn.innerText = 'Enviar Confirmação';
